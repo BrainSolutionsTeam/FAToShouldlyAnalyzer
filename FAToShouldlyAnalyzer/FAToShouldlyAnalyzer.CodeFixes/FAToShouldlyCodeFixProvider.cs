@@ -61,5 +61,10 @@ namespace FAToShouldlyAnalyzer
             // Return the new solution with the now-uppercase type name.
             return newSolution;
         }
+
+        private async Task<Solution> ChangeShouldBeCall(Document document)
+        {
+
+        }
     }
 }
