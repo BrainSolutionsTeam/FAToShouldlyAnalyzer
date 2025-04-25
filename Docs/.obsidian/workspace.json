@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "466f6e287fde9fa9",
+        "id": "e2f0127cd8e86ec9",
         "type": "tabs",
         "children": [
           {
-            "id": "f7de62f21a513a3b",
+            "id": "dcd3ee43a40f53a4",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -164,8 +164,11 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "dce7ef138db3003c",
+  "active": "dcd3ee43a40f53a4",
   "lastOpenFiles": [
-    "README.md"
+    "README.md",
+    "[Onboarding.md",
+    "[FAToShouldlyAnalyzer/LICENSE.md",
+    "[FAToShouldlyAnalyzer"
   ]
 }
