@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -35,12 +34,12 @@ namespace FAToShouldlyAnalyzer
             var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
 
             // Register a code action that will invoke the fix.
-            context.RegisterCodeFix(
-                CodeAction.Create(
-                    title: CodeFixResources.CodeFixTitle,
-                    createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
-                    equivalenceKey: nameof(CodeFixResources.CodeFixTitle)),
-                diagnostic);
+            //context.RegisterCodeFix(
+            //    CodeAction.Create(
+            //        title: CodeFixResources.CodeFixTitle,
+            //        createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
+            //        equivalenceKey: nameof(CodeFixResources.CodeFixTitle)),
+            //    diagnostic);
         }
 
         private async Task<Solution> MakeUppercaseAsync(Document document, TypeDeclarationSyntax typeDecl, CancellationToken cancellationToken)
@@ -62,9 +61,9 @@ namespace FAToShouldlyAnalyzer
             return newSolution;
         }
 
-        private async Task<Solution> ChangeShouldBeCall(Document document)
-        {
+        //private async Task<Solution> ChangeShouldBeCall(Document document)
+        //{
 
-        }
+        //}
     }
 }
