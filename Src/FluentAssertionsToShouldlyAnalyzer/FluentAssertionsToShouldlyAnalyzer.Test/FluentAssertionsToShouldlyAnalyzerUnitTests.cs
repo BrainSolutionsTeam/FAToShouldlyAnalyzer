@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -52,7 +52,7 @@ namespace FluentAssertionsToShouldlyAnalyzer.Test
             var importPath = importPaths.FirstOrDefault(Directory.Exists);
             if (importPath is null)
             {
-                throw new ArgumentNullException("Invalid import path");
+                throw new ArgumentNullException(nameof(importPath));
             }
             return importPath;
         }
