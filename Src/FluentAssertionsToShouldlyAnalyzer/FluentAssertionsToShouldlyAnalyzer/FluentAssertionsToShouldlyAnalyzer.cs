@@ -28,7 +28,7 @@ namespace FluentAssertionsToShouldlyAnalyzer
 
         private const string HelpLinkUri = "https://github.com/BrainSolutionsTeam/FluentAssertionsToShouldlyAnalyzer";
 
-        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+        public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: Title,
             messageFormat: MessageFormat,
@@ -40,7 +40,7 @@ namespace FluentAssertionsToShouldlyAnalyzer
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public const string FaShouldPrefix = "Should";
+        private const string FaShouldPrefix = "Should";
         private const string FaNamespace = "FluentAssertions";
 
         public override void Initialize(AnalysisContext context)

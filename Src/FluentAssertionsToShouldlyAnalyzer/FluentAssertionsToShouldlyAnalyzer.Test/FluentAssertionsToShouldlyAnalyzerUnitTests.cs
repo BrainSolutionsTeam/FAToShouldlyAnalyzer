@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Assert = Xunit.Assert;
 using VerifyCS = FluentAssertionsToShouldlyAnalyzer.Test.Verifiers.CSharpCodeFixVerifier<
     FluentAssertionsToShouldlyAnalyzer.FluentAssertionsToShouldlyAnalyzer,
     FluentAssertionsToShouldlyAnalyzer.FluentAssertionsToShouldlyCodeFixProvider>;
@@ -35,10 +36,12 @@ namespace FluentAssertionsToShouldlyAnalyzer.Test
             var shouldBeCodeFix = await File.ReadAllTextAsync(Path.Combine(GetImportPath(), "ShouldBeResult.txt"));
 
             // Act
-            var expected = VerifyCS.Diagnostic(nameof(global::FluentAssertionsToShouldlyAnalyzer.FluentAssertionsToShouldlyAnalyzer)).WithLocation(0);
+            var expected = VerifyCS.Diagnostic(FluentAssertionsToShouldlyAnalyzer.Rule)
+                .WithLocation(0);
 
             // Assert
             var codeFixTester = new CodeFixTester(shouldBeCode, shouldBeCodeFix, expected);
+            Assert.True(codeFixTester.ExpectedDiagnostics.Any());
             await codeFixTester.RunAsync(CancellationToken.None);
             var compilerDiagnostics = codeFixTester.CompilerDiagnostics;
         }
@@ -73,7 +76,8 @@ namespace FluentAssertionsToShouldlyAnalyzer.Test
                     .AddPackages(ImmutableArray.Create(
                             new PackageIdentity("FluentAssertions", "8.2.0"),
                             new PackageIdentity("xunit", "2.5.3"),
-                            new PackageIdentity("xunit.runner.visualstudio", "2.5.3")
+                            new PackageIdentity("xunit.runner.visualstudio", "2.5.3"),
+                            new PackageIdentity("Shouldly", "4.3.0")
                         )
                     );
             }

@@ -25,44 +25,44 @@ This analyzer aims to ease the migration process by identifying usages of _Fluen
 
 Currently, based on [this guide](https://github.com/shouldly/shouldly/issues/1034) from the _Shouldly_ repo, the analyzer detects and suggests replacements for :
 
-| FluentAssertions                                 | Shouldly                                          |
-| ------------------------------------------------ | ------------------------------------------------- |
-| result.Should().Be(expected);                    | result.ShouldBe(expected);                        |
-| result.Should().NotBe(unexpected);               | result.ShouldNotBe(unexpected);                   |
-| result.Should().BeNull();                        | result.ShouldBeNull();                            |
-| result.Should().NotBeNull();                     | result.ShouldNotBeNull();                         |
-| result.Should().BeTrue();                        | result.ShouldBeTrue();                            |
-| result.Should().BeFalse();                       | result.ShouldBeFalse();                           |
-| result.Should().BeSameAs(expected);              | result.ShouldBeSameAs(expected);                  |
-| result.Should().NotBeSameAs(unexpected);         | result.ShouldNotBeSameAs(unexpected);             |
-| result.Should().BeOfType();                      | result.ShouldBeOfType();                          |
-| result.Should().NotBeOfType();                   | result.ShouldNotBeOfType();                       |
-| result.Should().BeGreaterThan(value);            | result.ShouldBeGreaterThan(value);                |
-| result.Should().BeGreaterThanOrEqualTo(value);   | result.ShouldBeGreaterThanOrEqualTo(value);       |
-| result.Should().BeLessThan(value);               | result.ShouldBeLessThan(value);                   |
-| result.Should().BeLessThanOrEqualTo(value);      | result.ShouldBeLessThanOrEqualTo(value);          |
-| result.Should().BePositive();                    | result.ShouldBePositive();                        |
-| result.Should().BeNegative();                    | result.ShouldBeNegative();                        |
-| result.Should().BeInRange(low, high);            | result.ShouldBeInRange(low, high);                |
-| result.Should().NotBeInRange(low, high);         | result.ShouldNotBeInRange(low, high);             |
-| collection.Should().Contain(item);               | collection.ShouldContain(item);                   |
-| collection.Should().NotContain(item);            | collection.ShouldNotContain(item);                |
-| collection.Should().BeEmpty();                   | collection.ShouldBeEmpty();                       |
-| collection.Should().NotBeEmpty();                | collection.ShouldNotBeEmpty();                    |
-| collection.Should().HaveCount(count);            | collection.Count.ShouldBe(count);                 |
-| collection.Should().HaveCountGreaterThan(value); | collection.Count.ShouldBeGreaterThan(value);      |
-| collection.Should().HaveCountLessThan(value);    | collection.Count.ShouldBeLessThan(value);         |
-| collection.Should().AllBeAssignableTo();         | collection.ShouldAllBeAssignableTo();             |
-| collection.Should().OnlyHaveUniqueItems();       | collection.ShouldAllBeUnique();                   |
-| dictionary.Should().ContainKey(key);             | dictionary.ShouldContainKey(key);                 |
-| dictionary.Should().NotContainKey(key);          | dictionary.ShouldNotContainKey(key);              |
-| dictionary.Should().ContainValue(value);         | dictionary.ShouldContainValue(value);             |
-| dictionary.Should().NotContainValue(value);      | dictionary.ShouldNotContainValue(value);          |
-| action.Should().Throw();                         | action.ShouldThrow();                             |
-| action.Should().NotThrow();                      | action.ShouldNotThrow();                          |
-| action.Should().NotThrow();                      | action.ShouldNotThrow();                          |
-| action.Should().ThrowExactly();                  | action.ShouldThrowExactly();                      |
-| action.Should().Throw().WithMessage("message");  | action.ShouldThrow().Message.ShouldBe("message"); |
+| Status | FluentAssertions                                 | Shouldly                                          |
+| ------ | ------------------------------------------------ | ------------------------------------------------- |
+| 1      | result.Should().Be(expected);                    | result.ShouldBe(expected);                        |
+| 1      | result.Should().NotBe(unexpected);               | result.ShouldNotBe(unexpected);                   |
+| 1      | result.Should().BeNull();                        | result.ShouldBeNull();                            |
+| 1      | result.Should().NotBeNull();                     | result.ShouldNotBeNull();                         |
+|        | result.Should().BeTrue();                        | result.ShouldBeTrue();                            |
+|        | result.Should().BeFalse();                       | result.ShouldBeFalse();                           |
+|        | result.Should().BeSameAs(expected);              | result.ShouldBeSameAs(expected);                  |
+|        | result.Should().NotBeSameAs(unexpected);         | result.ShouldNotBeSameAs(unexpected);             |
+|        | result.Should().BeOfType();                      | result.ShouldBeOfType();                          |
+|        | result.Should().NotBeOfType();                   | result.ShouldNotBeOfType();                       |
+|        | result.Should().BeGreaterThan(value);            | result.ShouldBeGreaterThan(value);                |
+|        | result.Should().BeGreaterThanOrEqualTo(value);   | result.ShouldBeGreaterThanOrEqualTo(value);       |
+|        | result.Should().BeLessThan(value);               | result.ShouldBeLessThan(value);                   |
+|        | result.Should().BeLessThanOrEqualTo(value);      | result.ShouldBeLessThanOrEqualTo(value);          |
+|        | result.Should().BePositive();                    | result.ShouldBePositive();                        |
+|        | result.Should().BeNegative();                    | result.ShouldBeNegative();                        |
+|        | result.Should().BeInRange(low, high);            | result.ShouldBeInRange(low, high);                |
+|        | result.Should().NotBeInRange(low, high);         | result.ShouldNotBeInRange(low, high);             |
+|        | collection.Should().Contain(item);               | collection.ShouldContain(item);                   |
+|        | collection.Should().NotContain(item);            | collection.ShouldNotContain(item);                |
+|        | collection.Should().BeEmpty();                   | collection.ShouldBeEmpty();                       |
+|        | collection.Should().NotBeEmpty();                | collection.ShouldNotBeEmpty();                    |
+|        | collection.Should().HaveCount(count);            | collection.Count.ShouldBe(count);                 |
+|        | collection.Should().HaveCountGreaterThan(value); | collection.Count.ShouldBeGreaterThan(value);      |
+|        | collection.Should().HaveCountLessThan(value);    | collection.Count.ShouldBeLessThan(value);         |
+|        | collection.Should().AllBeAssignableTo();         | collection.ShouldAllBeAssignableTo();             |
+|        | collection.Should().OnlyHaveUniqueItems();       | collection.ShouldAllBeUnique();                   |
+|        | dictionary.Should().ContainKey(key);             | dictionary.ShouldContainKey(key);                 |
+|        | dictionary.Should().NotContainKey(key);          | dictionary.ShouldNotContainKey(key);              |
+|        | dictionary.Should().ContainValue(value);         | dictionary.ShouldContainValue(value);             |
+|        | dictionary.Should().NotContainValue(value);      | dictionary.ShouldNotContainValue(value);          |
+|        | action.Should().Throw();                         | action.ShouldThrow();                             |
+|        | action.Should().NotThrow();                      | action.ShouldNotThrow();                          |
+|        | action.Should().NotThrow();                      | action.ShouldNotThrow();                          |
+|        | action.Should().ThrowExactly();                  | action.ShouldThrowExactly();                      |
+|        | action.Should().Throw().WithMessage("message");  | action.ShouldThrow().Message.ShouldBe("message"); |
 
 ## TODO
 
