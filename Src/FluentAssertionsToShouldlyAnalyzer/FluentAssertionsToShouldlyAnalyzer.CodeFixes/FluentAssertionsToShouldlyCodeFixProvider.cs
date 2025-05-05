@@ -1,5 +1,6 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -61,9 +62,58 @@ namespace FluentAssertionsToShouldlyAnalyzer
             return newSolution;
         }
 
-        //private async Task<Solution> ChangeShouldBeCall(Document document)
-        //{
+        private async Task<Solution> ChangeShouldBeCall(Document document)
+        {
+            var root = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
 
-        //}
+            var invocationExpressions = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
+
+            foreach (var invocation in invocationExpressions)
+            {
+                if (!(invocation.Expression is MemberAccessExpressionSyntax memberAccess))
+                {
+                    continue;
+                }
+
+                var symbolInfo = semanticModel.GetSymbolInfo(memberAccess);
+
+                if (FluentAssertionsToShouldlyAnalyzer.IsCallingShouldFromFa(memberAccess, symbolInfo) is false)
+                {
+                    continue;
+                }
+
+                var methodSymbol = symbolInfo.Symbol as IMethodSymbol;
+
+                // Check the next method in the chain
+                if ((memberAccess.Parent is InvocationExpressionSyntax nextInvocation
+                     && nextInvocation.Expression is MemberAccessExpressionSyntax nextMemberAccess
+                     && semanticModel.GetSymbolInfo(nextMemberAccess).Symbol is IMethodSymbol nextMethodSymbol) is false)
+                {
+                    continue;
+                }
+                switch (nextMethodSymbol.Name)
+                {
+                    case "Be":
+                        // Suggest replacement for "Should().Be()"
+                        // Example: Replace with "ShouldBe()"
+                        break;
+
+                    case "BeGreaterThan":
+                        // Suggest replacement for "Should().BeGreaterThan()"
+                        // Example: Replace with "ShouldBeGreaterThan()"
+                        break;
+
+                    // Add more cases as needed for other methods
+                    default:
+                        // Handle other cases or do nothing
+                        break;
+                }
+            }
+
+            // Return the updated solution
+            var updatedDocument = document.WithSyntaxRoot(root);
+            return updatedDocument.Project.Solution;
+        }
     }
 }

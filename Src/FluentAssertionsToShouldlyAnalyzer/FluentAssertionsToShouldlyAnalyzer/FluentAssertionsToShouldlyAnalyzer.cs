@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -40,7 +40,7 @@ namespace FluentAssertionsToShouldlyAnalyzer
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        private const string FaShouldPrefix = "Should";
+        public const string FaShouldPrefix = "Should";
         private const string FaNamespace = "FluentAssertions";
 
         public override void Initialize(AnalysisContext context)
@@ -55,20 +55,28 @@ namespace FluentAssertionsToShouldlyAnalyzer
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax)context.Node;
-            if (invocationExpression.Expression is MemberAccessExpressionSyntax memberAccess
-                && FaShouldPrefix.Equals(memberAccess.Name.Identifier.Text, StringComparison.InvariantCulture))
+            if (!(invocationExpression.Expression is MemberAccessExpressionSyntax memberAccess))
             {
-                // Found a call to a method with the name "Should"
-                var symbolInfo = context.SemanticModel.GetSymbolInfo(memberAccess);
-
-                if (symbolInfo.Symbol is IMethodSymbol methodSymbol
-                    && methodSymbol.ContainingNamespace.ToString().StartsWith(FaNamespace))
-                {
-                    // The method is in the FluentAssertions namespace
-                    var diagnostic = Diagnostic.Create(Rule, memberAccess.Name.GetLocation());
-                    context.ReportDiagnostic(diagnostic);
-                }
+                return;
             }
+
+            var symbolInfo = context.SemanticModel.GetSymbolInfo(memberAccess);
+            if (IsCallingShouldFromFa(memberAccess, symbolInfo) is false)
+            {
+                return;
+            }
+
+            // Report the diagnostic if the method is `Should()` from FluentAssertions
+            var diagnostic = Diagnostic.Create(Rule, memberAccess.Name.GetLocation());
+            context.ReportDiagnostic(diagnostic);
         }
+
+        public static bool IsCallingShouldFromFa(MemberAccessExpressionSyntax expressionSyntax, SymbolInfo expressionSymbolInfo)
+            =>
+                (
+                    FaShouldPrefix.Equals(expressionSyntax.Name.Identifier.Text, StringComparison.Ordinal)
+                    && expressionSymbolInfo.Symbol is IMethodSymbol methodSymbol
+                    && methodSymbol.ContainingNamespace.ToString().StartsWith(FaNamespace)
+                );
     }
 }
