@@ -61,7 +61,7 @@ namespace FluentAssertionsToShouldlyAnalyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Make uppercase.
+        ///   Looks up a localized string similar to Update assertion.
         /// </summary>
         internal static string CodeFixTitle {
             get {

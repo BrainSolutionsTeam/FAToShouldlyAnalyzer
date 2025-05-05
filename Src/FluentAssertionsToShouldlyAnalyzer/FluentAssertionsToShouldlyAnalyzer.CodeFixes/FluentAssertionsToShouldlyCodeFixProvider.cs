@@ -33,12 +33,12 @@ namespace FluentAssertionsToShouldlyAnalyzer
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: CodeFixResources.CodeFixTitle,
-                    createChangedSolution: c => ChangeShouldBeCall(root, semanticModel, context.Document),
+                    createChangedSolution: c => ChangeShouldMethodCall(root, semanticModel, context.Document),
                     equivalenceKey: nameof(CodeFixResources.CodeFixTitle)),
                 diagnostic);
         }
 
-        private Task<Solution> ChangeShouldBeCall(SyntaxNode root, SemanticModel semanticModel, Document document)
+        private static Task<Solution> ChangeShouldMethodCall(SyntaxNode root, SemanticModel semanticModel, Document document)
         {
             var invocationExpressions = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
 
@@ -59,7 +59,7 @@ namespace FluentAssertionsToShouldlyAnalyzer
                 }
 
                 // Check the next method in the chain
-                if ((memberAccess.Parent is InvocationExpressionSyntax nextInvocation
+                if ((memberAccess.Parent.Parent.Parent is InvocationExpressionSyntax nextInvocation
                      && nextInvocation.Expression is MemberAccessExpressionSyntax nextMemberAccess
                      && semanticModel.GetSymbolInfo(nextMemberAccess).Symbol is IMethodSymbol nextMethodSymbol) is false)
                 {
