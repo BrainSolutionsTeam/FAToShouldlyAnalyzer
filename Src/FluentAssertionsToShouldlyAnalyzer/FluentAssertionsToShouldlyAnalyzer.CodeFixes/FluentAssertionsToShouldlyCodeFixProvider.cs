@@ -33,52 +33,74 @@ namespace FluentAssertionsToShouldlyAnalyzer
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: CodeFixResources.CodeFixTitle,
-                    createChangedSolution: c => ChangeShouldMethodCall(root, semanticModel, context.Document),
+                    createChangedSolution: c => ChangeShouldMethodCall(
+                        root,
+                        semanticModel,
+                        context.Document,
+                        diagnostic),
                     equivalenceKey: nameof(CodeFixResources.CodeFixTitle)),
                 diagnostic);
         }
 
-        private static Task<Solution> ChangeShouldMethodCall(SyntaxNode root, SemanticModel semanticModel, Document document)
+        private static Task<Solution> ChangeShouldMethodCall(
+            SyntaxNode root,
+            SemanticModel semanticModel,
+            Document document,
+            Diagnostic diagnostic)
         {
-            var invocationExpressions = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
+            var diagnosticSpan = diagnostic.Location.SourceSpan;
+            var invocationNode = root.FindNode(diagnosticSpan);
+
+            if (!(invocationNode is IdentifierNameSyntax invocation                                             // invocation = Should
+                  && invocation.Parent is MemberAccessExpressionSyntax memberAccess                             // memberAccess = person.Name.Should
+                  && memberAccess.Expression is MemberAccessExpressionSyntax memberAccessExpression             // memberAccessExpression = person.Name
+                  && memberAccessExpression.Expression is IdentifierNameSyntax identifierName                   // identifierName = person
+                ))
+            {
+                return Task.FromResult(document.Project.Solution);
+            }
+
+            var symbolInfo = semanticModel.GetSymbolInfo(memberAccess);
+
+            if (FluentAssertionsToShouldlyAnalyzer.IsCallingShouldFromFa(memberAccess, symbolInfo) is false)
+            {
+                return Task.FromResult(document.Project.Solution);
+            }
+
+            // TODO: OKAY here
+
+            // Check the next method in the chain
+            if ((memberAccess.Parent is InvocationExpressionSyntax shouldName // Should
+                 && shouldName.Parent is InvocationExpressionSyntax shouldMethodInvocation // Should()
+                 && shouldMethodInvocation.Parent is InvocationExpressionSyntax nextInvocation // Be, NotBe, ...
+                 && nextInvocation.Expression is MemberAccessExpressionSyntax nextMemberAccess
+                 && semanticModel.GetSymbolInfo(nextMemberAccess).Symbol is IMethodSymbol nextMethodSymbol) is false)
+            {
+                return Task.FromResult(document.Project.Solution);
+            }
+
+            // TODO: Handle specific case before basic cases, like Should Throw ??
 
             var faReplacement = GetFaReplacement();
 
-            foreach (var invocation in invocationExpressions)
+            if (faReplacement.TryGetValue(nextMethodSymbol.Name, out var shouldlyMethod) is false)
             {
-                if (!(invocation.Expression is MemberAccessExpressionSyntax memberAccess))
-                {
-                    continue;
-                }
-
-                var symbolInfo = semanticModel.GetSymbolInfo(memberAccess);
-
-                if (FluentAssertionsToShouldlyAnalyzer.IsCallingShouldFromFa(memberAccess, symbolInfo) is false)
-                {
-                    continue;
-                }
-
-                // Check the next method in the chain
-                if ((memberAccess.Parent.Parent.Parent is InvocationExpressionSyntax nextInvocation
-                     && nextInvocation.Expression is MemberAccessExpressionSyntax nextMemberAccess
-                     && semanticModel.GetSymbolInfo(nextMemberAccess).Symbol is IMethodSymbol nextMethodSymbol) is false)
-                {
-                    continue;
-                }
-
-                // Handle specific case before this, like Should Throw ? 
-
-                if (faReplacement.TryGetValue(nextMethodSymbol.Name, out var value) is false)
-                {
-                    continue;
-                }
-
-                var updatedInvocation = nextInvocation
-                    .WithExpression(SyntaxFactory.IdentifierName(value))
-                    .WithArgumentList(invocation.ArgumentList);
-
-                root = root.ReplaceNode(nextInvocation, updatedInvocation);
+                return Task.FromResult(document.Project.Solution);
             }
+
+            // Go for replacement:
+            var baseExpression = memberAccessExpression.Expression;
+
+            var newMemberAccess = SyntaxFactory.MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                identifierName,
+                SyntaxFactory.IdentifierName(shouldlyMethod));
+
+            var updatedInvocation = SyntaxFactory.InvocationExpression(
+                newMemberAccess,
+                nextInvocation.ArgumentList);
+
+            root = root.ReplaceNode(nextInvocation, updatedInvocation);
 
             // Return the updated solution
             var updatedDocument = document.WithSyntaxRoot(root);
