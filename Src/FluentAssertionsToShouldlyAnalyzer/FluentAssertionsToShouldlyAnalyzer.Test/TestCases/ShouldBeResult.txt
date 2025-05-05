@@ -1,5 +1,6 @@
-using Shouldly;
+using FluentAssertions;
 using Xunit;
+using Shouldly;
 
 namespace FluentAssertionsToShouldlyAnalyzer.Test.TestCases
 {

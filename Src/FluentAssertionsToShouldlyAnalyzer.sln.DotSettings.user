@@ -1,7 +1,6 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=264ffd2a_002D9598_002D4da5_002D8967_002D905562e7b5cc/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestMethod2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;MSTest::C23E29AF-A253-D740-C5A4-FBFCAE27DC68::.NETCoreApp,Version=v3.1::FluentAssertionsToShouldlyAnalyzer.Test.FluentAssertionsToShouldlyAnalyzerUnitTests.TestShouldBe&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;MSTest::C23E29AF-A253-D740-C5A4-FBFCAE27DC68::.NETCoreApp,Version=v3.1::FluentAssertionsToShouldlyAnalyzer.Test.FluentAssertionsToShouldlyAnalyzerUnitTests.TestNoIssue&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::C23E29AF-A253-D740-C5A4-FBFCAE27DC68::.NETCoreApp,Version=v3.1::FluentAssertionsToShouldlyAnalyzer.Test.FluentAssertionsToShouldlyAnalyzerUnitTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
