@@ -42,6 +42,8 @@ namespace FluentAssertionsToShouldlyAnalyzer
 
         private const string FaShouldPrefix = "Should";
         private const string FaNamespace = "FluentAssertions";
+        public const string ShouldlyUsingDirective = "Shouldly";
+        public const string ShouldlyDefaultMethod = "Shouldly.Should";
 
         public override void Initialize(AnalysisContext context)
         {

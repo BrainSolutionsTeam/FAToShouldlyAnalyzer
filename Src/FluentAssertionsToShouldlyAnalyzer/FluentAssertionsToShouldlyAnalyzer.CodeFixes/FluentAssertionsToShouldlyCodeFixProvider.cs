@@ -25,10 +25,13 @@ namespace FluentAssertionsToShouldlyAnalyzer
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            var compilation = await context.Document.Project.GetCompilationAsync(context.CancellationToken).ConfigureAwait(false);
 
             var diagnostic = context.Diagnostics.First();
             var diagnosticSpan = diagnostic.Location.SourceSpan;
             var invocationNode = root.FindNode(diagnosticSpan);
+
+            var isShouldlyAvailable = compilation?.GetTypeByMetadataName(FluentAssertionsToShouldlyAnalyzer.ShouldlyDefaultMethod) != null;
 
             var isCodeFixAvailable = IsCodeFixAvailable(
                 invocationNode,
@@ -37,7 +40,7 @@ namespace FluentAssertionsToShouldlyAnalyzer
                 out var shouldlyMethod,
                 out var nextInvocation);
 
-            if (isCodeFixAvailable)
+            if (isShouldlyAvailable && isCodeFixAvailable)
             {
                 //Register code action that will invoke the fix.
                 context.RegisterCodeFix(
@@ -128,8 +131,17 @@ namespace FluentAssertionsToShouldlyAnalyzer
                 SyntaxFactory.IdentifierName(shouldlyMethod));
 
             var updatedInvocation = SyntaxFactory.InvocationExpression(newMemberAccess, nextInvocation.ArgumentList);
-
             root = root.ReplaceNode(nextInvocation, updatedInvocation);
+
+            // Use Shouldly if not used yet
+            if (root is CompilationUnitSyntax compilationUnit
+                && compilationUnit.Usings.All(u => u.Name.ToString() != FluentAssertionsToShouldlyAnalyzer.ShouldlyUsingDirective))
+            {
+                var shouldlyUsing = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(FluentAssertionsToShouldlyAnalyzer.ShouldlyUsingDirective))
+                    .WithTrailingTrivia(SyntaxFactory.ElasticCarriageReturnLineFeed);
+
+                root = compilationUnit.AddUsings(shouldlyUsing);
+            }
 
             // Return the updated solution
             var updatedDocument = document.WithSyntaxRoot(root);
