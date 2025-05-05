@@ -25,9 +25,7 @@ namespace FluentAssertionsToShouldlyAnalyzer
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-
             var diagnostic = context.Diagnostics.First();
-
 
             //Register code action that will invoke the fix.
             context.RegisterCodeFix(
@@ -51,11 +49,11 @@ namespace FluentAssertionsToShouldlyAnalyzer
             var diagnosticSpan = diagnostic.Location.SourceSpan;
             var invocationNode = root.FindNode(diagnosticSpan);
 
-            if (!(invocationNode is IdentifierNameSyntax invocation                                             // invocation = Should
+            if ((invocationNode is IdentifierNameSyntax invocation                                              // invocation = Should
                   && invocation.Parent is MemberAccessExpressionSyntax memberAccess                             // memberAccess = person.Name.Should
                   && memberAccess.Expression is MemberAccessExpressionSyntax memberAccessExpression             // memberAccessExpression = person.Name
                   && memberAccessExpression.Expression is IdentifierNameSyntax identifierName                   // identifierName = person
-                ))
+                ) is false)
             {
                 return Task.FromResult(document.Project.Solution);
             }
@@ -67,14 +65,12 @@ namespace FluentAssertionsToShouldlyAnalyzer
                 return Task.FromResult(document.Project.Solution);
             }
 
-            // TODO: OKAY here
-
             // Check the next method in the chain
-            if ((memberAccess.Parent is InvocationExpressionSyntax shouldName // Should
-                 && shouldName.Parent is InvocationExpressionSyntax shouldMethodInvocation // Should()
-                 && shouldMethodInvocation.Parent is InvocationExpressionSyntax nextInvocation // Be, NotBe, ...
-                 && nextInvocation.Expression is MemberAccessExpressionSyntax nextMemberAccess
-                 && semanticModel.GetSymbolInfo(nextMemberAccess).Symbol is IMethodSymbol nextMethodSymbol) is false)
+            if ((memberAccess.Parent is InvocationExpressionSyntax shouldMethodInvocation                       // shouldMethodInvocation = person.Name.Should()
+                 && shouldMethodInvocation.Parent is MemberAccessExpressionSyntax nextMemberAccess              // nextMemberAccess = person.Name.Should().Be, .NotBe, ...
+                 && nextMemberAccess.Parent is InvocationExpressionSyntax nextInvocation                        // nextInvocation = person.Name.Should().Be("xxx")
+                 && semanticModel.GetSymbolInfo(nextMemberAccess).Symbol is IMethodSymbol nextMethodSymbol      // nextMethodSymbol = MethodSymbol of `Be`, `NotBe`, etc.
+                 ) is false)
             {
                 return Task.FromResult(document.Project.Solution);
             }
@@ -88,17 +84,15 @@ namespace FluentAssertionsToShouldlyAnalyzer
                 return Task.FromResult(document.Project.Solution);
             }
 
-            // Go for replacement:
-            var baseExpression = memberAccessExpression.Expression;
+            // TODO: OKAY here
 
+            // Go for replacement:
             var newMemberAccess = SyntaxFactory.MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
-                identifierName,
+                memberAccessExpression,
                 SyntaxFactory.IdentifierName(shouldlyMethod));
 
-            var updatedInvocation = SyntaxFactory.InvocationExpression(
-                newMemberAccess,
-                nextInvocation.ArgumentList);
+            var updatedInvocation = SyntaxFactory.InvocationExpression(newMemberAccess, nextInvocation.ArgumentList);
 
             root = root.ReplaceNode(nextInvocation, updatedInvocation);
 
