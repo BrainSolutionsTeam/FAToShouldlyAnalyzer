@@ -27,23 +27,26 @@ namespace FluentAssertionsToShouldlyAnalyzer.Test
             await VerifyCS.VerifyAnalyzerAsync(test);
         }
 
-        //Diagnostic and CodeFix both triggered and checked for
         [TestMethod]
-        public async Task TestShouldBe()
+        [DataRow(001, "ShouldBe.txt", "ShouldBeResult.txt", 0)]
+        [DataRow(002, "ShouldNotBe.txt", "ShouldNotBeResult.txt", 0)]
+        [DataRow(003, "ShouldBeNull.txt", "ShouldBeNullResult.txt", 0)]
+        [DataRow(004, "ShouldNotBeNull.txt", "ShouldNotBeNullResult.txt", 0)]
+        public async Task TestShouldCodeFix(int index, string sourceCodePath, string resultCodePath, int diagnosticLocation)
         {
             // Arrange
-            var shouldBeCode = await File.ReadAllTextAsync(Path.Combine(GetImportPath(), "ShouldBe.txt"));
-            var shouldBeCodeFix = await File.ReadAllTextAsync(Path.Combine(GetImportPath(), "ShouldBeResult.txt"));
+            var sourceCode = await File.ReadAllTextAsync(Path.Combine(GetImportPath(), sourceCodePath));
+            var sourceCodeFix = await File.ReadAllTextAsync(Path.Combine(GetImportPath(), resultCodePath));
 
             // Act
-            var expected = VerifyCS.Diagnostic(FluentAssertionsToShouldlyAnalyzer.Rule)
-                .WithLocation(0);
+            var expected = VerifyCS
+                .Diagnostic(FluentAssertionsToShouldlyAnalyzer.Rule)
+                .WithLocation(diagnosticLocation);
 
             // Assert
-            var codeFixTester = new CodeFixTester(shouldBeCode, shouldBeCodeFix, expected);
+            var codeFixTester = new CodeFixTester(sourceCode, sourceCodeFix, expected);
             Assert.True(codeFixTester.ExpectedDiagnostics.Any());
             await codeFixTester.RunAsync(CancellationToken.None);
-            var compilerDiagnostics = codeFixTester.CompilerDiagnostics;
         }
 
         private static string GetImportPath()
