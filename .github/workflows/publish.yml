@@ -19,16 +19,16 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Restore dependencies
-        run: dotnet restore FluentAssertionsToShouldlyAnalyzer.sln
+        run: dotnet restore Src/FluentAssertionsToShouldlyAnalyzer.sln
 
       - name: Build solution
-        run: dotnet build FluentAssertionsToShouldlyAnalyzer.sln --configuration Release --no-restore
+        run: dotnet build Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.sln --configuration Release --no-restore
 
       - name: Run tests
-        run: dotnet test FluentAssertionsToShouldlyAnalyzer.sln --no-build --verbosity normal
+        run: dotnet test Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.sln --no-build --verbosity normal
 
       - name: Pack NuGet package
-        run: dotnet pack FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.csproj --configuration Release --output ./artifacts
+        run: dotnet pack Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.csproj --configuration Release --output ./artifacts
 
       - name: Publish to NuGet
         env:
