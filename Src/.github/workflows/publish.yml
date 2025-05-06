@@ -28,7 +28,7 @@ jobs:
         run: dotnet test FluentAssertionsToShouldlyAnalyzer.sln --no-build --verbosity normal
 
       - name: Pack NuGet package
-        run: dotnet pack FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.Package/FluentAssertionsToShouldlyAnalyzer.Package.csproj --configuration Release --output ./artifacts
+        run: dotnet pack FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.csproj --configuration Release --output ./artifacts
 
       - name: Publish to NuGet
         env:
