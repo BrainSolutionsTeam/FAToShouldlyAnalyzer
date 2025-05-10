@@ -32,9 +32,14 @@ jobs:
           dotnet build Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.Package  --configuration Release --no-restore
           dotnet build Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.Test  --configuration Release --no-restore
 
-      - name: Run tests
-        shell: bash
-        run: dotnet build Src/FluentAssertionsToShouldlyAnalyzer/**/*Test.csproj && dotnet test Src/FluentAssertionsToShouldlyAnalyzer/**/*Test.csproj --no-build --verbosity normal
+      - name: Run Unit Tests and Generate Coverage
+        uses: glennawatson/coverlet-msbuild@v1
+        with:
+            project-files: 'Src/FluentAssertionsToShouldlyAnalyzer/**/*Test.csproj'
+            no-build: true  
+            output-format: cobertura
+            output: results
+            configuration: Release
 
       - name: Pack NuGet package
         run: dotnet pack Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.Package/FluentAssertionsToShouldlyAnalyzer.Package.csproj --configuration Release --output ./artifacts
