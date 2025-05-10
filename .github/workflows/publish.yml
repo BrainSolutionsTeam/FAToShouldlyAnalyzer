@@ -12,18 +12,15 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        dotnet-version: ['3.1.x', '6.0.x']
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup dotnet ${{ matrix.dotnet-version }}
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ matrix.dotnet-version }}
+          dotnet-version: "8.0.x"
 
       - name: Restore dependencies
         run: dotnet restore Src/FluentAssertionsToShouldlyAnalyzer.sln
