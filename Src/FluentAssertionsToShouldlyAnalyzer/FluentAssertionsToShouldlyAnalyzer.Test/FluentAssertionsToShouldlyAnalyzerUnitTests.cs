@@ -4,13 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp.Testing;
+using FluentAssertionsToShouldlyAnalyzer.Test.Verifiers;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using VerifyCS = FluentAssertionsToShouldlyAnalyzer.Test.Verifiers.CSharpCodeFixVerifier<
-    FluentAssertionsToShouldlyAnalyzer.FluentAssertionsToShouldlyAnalyzer,
-    FluentAssertionsToShouldlyAnalyzer.FluentAssertionsToShouldlyCodeFixProvider>;
 
 namespace FluentAssertionsToShouldlyAnalyzer.Test
 {
@@ -23,25 +20,28 @@ namespace FluentAssertionsToShouldlyAnalyzer.Test
         {
             var test = @"";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCs.VerifyAnalyzerAsync(test);
         }
 
-        //Diagnostic and CodeFix both triggered and checked for
         [TestMethod]
-        public async Task TestShouldBe()
+        [DataRow(001, "UnitTests.txt", new[] { 0, 1, 2 })]
+        public async Task TestShouldCodeFix(int index, string sourceCodePath, int[] diagnosticLocations)
         {
             // Arrange
-            var shouldBeCode = await File.ReadAllTextAsync(Path.Combine(GetImportPath(), "ShouldBe.txt"));
-            var shouldBeCodeFix = await File.ReadAllTextAsync(Path.Combine(GetImportPath(), "ShouldBeResult.txt"));
+            var sourceCode = await File.ReadAllTextAsync(Path.Combine(GetImportPath(), sourceCodePath));
 
             // Act
-            var expected = VerifyCS.Diagnostic(nameof(global::FluentAssertionsToShouldlyAnalyzer.FluentAssertionsToShouldlyAnalyzer)).WithLocation(0);
+            var expectedDiagnostics = diagnosticLocations
+                .Select(loc => VerifyCs
+                    .Diagnostic(FluentAssertionsToShouldlyAnalyzer.Rule)
+                    .WithLocation(loc))
+                .ToArray();
 
             // Assert
-            var codeFixTester = new CodeFixTester(shouldBeCode, shouldBeCodeFix, expected);
-            await codeFixTester.RunAsync(CancellationToken.None);
-            var compilerDiagnostics = codeFixTester.CompilerDiagnostics;
+            await VerifyCs.VerifyAnalyzerAsync(sourceCode, expectedDiagnostics);
         }
+
+        #region Helpers
 
         private static string GetImportPath()
         {
@@ -57,27 +57,43 @@ namespace FluentAssertionsToShouldlyAnalyzer.Test
             return importPath;
         }
 
-        private class
-            CodeFixTester : CSharpCodeFixTest<FluentAssertionsToShouldlyAnalyzer, FluentAssertionsToShouldlyCodeFixProvider, XUnitVerifier>
+        private static class VerifyCs
         {
-            public CodeFixTester(
-                string source,
-                string fixedSource,
-                params DiagnosticResult[] expected)
-            {
-                TestCode = source;
-                FixedCode = fixedSource;
-                ExpectedDiagnostics.AddRange(expected);
+            public static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
+                => CSharpCodeFixVerifier<
+                    FluentAssertionsToShouldlyAnalyzer,
+                    FluentAssertionsToShouldlyCodeFixProvider>.Diagnostic(descriptor);
 
-                ReferenceAssemblies = ReferenceAssemblies.Default
-                    .AddPackages(ImmutableArray.Create(
-                            new PackageIdentity("FluentAssertions", "8.2.0"),
-                            new PackageIdentity("xunit", "2.5.3"),
-                            new PackageIdentity("xunit.runner.visualstudio", "2.5.3")
-                        )
-                    );
+            private static CSharpCodeFixVerifier<
+                FluentAssertionsToShouldlyAnalyzer,
+                FluentAssertionsToShouldlyCodeFixProvider>.Test CreateTest()
+            {
+                var test = new CSharpCodeFixVerifier<
+                        FluentAssertionsToShouldlyAnalyzer,
+                        FluentAssertionsToShouldlyCodeFixProvider>.Test
+                {
+                    ReferenceAssemblies = ReferenceAssemblies.Default
+                            .AddPackages(ImmutableArray.Create(
+                                    new PackageIdentity("FluentAssertions", "8.2.0"),
+                                    new PackageIdentity("xunit", "2.5.3"),
+                                    new PackageIdentity("xunit.runner.visualstudio", "2.5.3"),
+                                    new PackageIdentity("Shouldly", "4.3.0")
+                                )
+                            )
+                };
+
+                return test;
+            }
+
+            public static Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
+            {
+                var test = CreateTest();
+                test.TestCode = source;
+                test.ExpectedDiagnostics.AddRange(expected);
+                return test.RunAsync(CancellationToken.None);
             }
         }
 
+        #endregion
     }
 }

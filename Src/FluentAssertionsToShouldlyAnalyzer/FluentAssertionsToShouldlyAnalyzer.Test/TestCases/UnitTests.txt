@@ -1,4 +1,4 @@
-using Shouldly;
+using FluentAssertions;
 using Xunit;
 
 namespace FluentAssertionsToShouldlyAnalyzer.Test.TestCases
@@ -10,7 +10,9 @@ namespace FluentAssertionsToShouldlyAnalyzer.Test.TestCases
         public void Name_Should_Be_Expected()
         {
             var person = new Person(30, "John", null);
-            person.Name.ShouldBe("John");
+            person.Name.{|#0:Should|}().Be("John");
+            person.Name.{|#1:Should|}().NotBe("Luke");
+            person.Name.Equals("John").{|#2:Should|}().BeTrue();
         }
     }
 
