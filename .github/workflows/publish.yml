@@ -34,7 +34,7 @@ jobs:
 
       - name: Run tests
         shell: bash
-        run: dotnet test Src/FluentAssertionsToShouldlyAnalyzer/**/*Test.csproj --no-build --verbosity normal
+        run: dotnet build Src/FluentAssertionsToShouldlyAnalyzer/**/*Test.csproj && dotnet test Src/FluentAssertionsToShouldlyAnalyzer/**/*Test.csproj --no-build --verbosity normal
 
       - name: Pack NuGet package
         run: dotnet pack Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.Package/FluentAssertionsToShouldlyAnalyzer.Package.csproj --configuration Release --output ./artifacts
