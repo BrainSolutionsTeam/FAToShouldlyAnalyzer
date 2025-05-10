@@ -27,6 +27,13 @@ jobs:
 
       - name: Build solution
         run: dotnet build Src/FluentAssertionsToShouldlyAnalyzer.sln --configuration Release --no-restore
+       
+      - name: Build solution projects
+        run: |
+          dotnet build Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer  --configuration Release --no-restore
+          dotnet build Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.CodeFixes  --configuration Release --no-restore
+          dotnet build Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.Test  --configuration Release --no-restore
+          dotnet build Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.Package  --configuration Release --no-restore
 
       - name: Run tests
         run: dotnet test Src/FluentAssertionsToShouldlyAnalyzer.sln --no-build --verbosity normal
