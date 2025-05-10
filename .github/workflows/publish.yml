@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+      - 'releases/*'
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -28,7 +32,7 @@ jobs:
         run: dotnet test Src/FluentAssertionsToShouldlyAnalyzer.sln --no-build --verbosity normal
 
       - name: Pack NuGet package
-        run: dotnet pack Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.csproj --configuration Release --output ./artifacts
+        run: dotnet pack Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.Package/FluentAssertionsToShouldlyAnalyzer.Package.csproj --configuration Release --output ./artifacts
 
       - name: Publish to NuGet
         env:
@@ -36,16 +40,5 @@ jobs:
         run: |
           dotnet nuget push ./artifacts/*.nupkg \
             --api-key $NUGET_API_KEY \
-            --source https://api.nuget.org/v3/index.json
+            --source https://apiint.nugettest.org/v3/index.json
 
-    #   - name: Install vsce
-    #     run: npm install -g vsce
-
-    #   - name: Package VSIX extension
-    #     run: vsce package --out ./artifacts
-
-    #   - name: Publish to Visual Studio Marketplace
-    #     env:
-    #       VS_MARKETPLACE_PAT: ${{ secrets.VS_MARKETPLACE_PAT }}
-    #     run: |
-    #       vsce publish --pat $VS_MARKETPLACE_PAT

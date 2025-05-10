@@ -11,15 +11,15 @@
     <PackageId>FluentAssertionsToShouldlyAnalyzer</PackageId>
     <PackageVersion>1.0.0.0</PackageVersion>
     <Authors>Toky</Authors>
-    <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
-    <PackageProjectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</PackageProjectUrl>
-    <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
-    <RepositoryUrl>http://REPOSITORY_URL_HERE_OR_DELETE_THIS_LINE</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/BrainSolutionsTeam/FAToShouldlyAnalyzer</PackageProjectUrl>
+    <PackageIconUrl>https://avatars.githubusercontent.com/u/125262211</PackageIconUrl>
+    <RepositoryUrl>https://github.com/BrainSolutionsTeam/FAToShouldlyAnalyzer</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>FluentAssertionsToShouldlyAnalyzer</Description>
-    <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added simple analyzer that shows warnings.</PackageReleaseNotes>
     <Copyright>Copyright</Copyright>
-    <PackageTags>FluentAssertionsToShouldlyAnalyzer, analyzers</PackageTags>
+    <PackageTags>FluentAssertionsToShouldlyAnalyzer, analyzers, codefix, testing, fluentassertions, shouldly</PackageTags>
+    <PackageReadmeFile>Nuget-README.md</PackageReadmeFile>
     <DevelopmentDependency>true</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>
 
@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <None Update="tools\*.ps1" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" />
+    <None Include="Nuget-README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <Target Name="_AddAnalyzersToOutput">
