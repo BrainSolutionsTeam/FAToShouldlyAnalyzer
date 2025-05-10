@@ -31,7 +31,7 @@ Currently, based on [this guide](https://github.com/shouldly/shouldly/issues/103
 | 1      | result.Should().NotBe(unexpected);               | result.ShouldNotBe(unexpected);                   |
 | 1      | result.Should().BeNull();                        | result.ShouldBeNull();                            |
 | 1      | result.Should().NotBeNull();                     | result.ShouldNotBeNull();                         |
-|        | result.Should().BeTrue();                        | result.ShouldBeTrue();                            |
+| 1      | result.Should().BeTrue();                        | result.ShouldBeTrue();                            |
 |        | result.Should().BeFalse();                       | result.ShouldBeFalse();                           |
 |        | result.Should().BeSameAs(expected);              | result.ShouldBeSameAs(expected);                  |
 |        | result.Should().NotBeSameAs(unexpected);         | result.ShouldNotBeSameAs(unexpected);             |

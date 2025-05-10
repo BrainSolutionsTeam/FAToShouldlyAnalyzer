@@ -32,6 +32,7 @@ namespace FluentAssertionsToShouldlyAnalyzer.Test
         [DataRow(002, "ShouldNotBe.txt", "ShouldNotBeResult.txt", 0)]
         [DataRow(003, "ShouldBeNull.txt", "ShouldBeNullResult.txt", 0)]
         [DataRow(004, "ShouldNotBeNull.txt", "ShouldNotBeNullResult.txt", 0)]
+        [DataRow(005, "ShouldBeTrue.txt", "ShouldBeTrueResult.txt", 0)]
         public async Task TestShouldCodeFix(int index, string sourceCodePath, string resultCodePath, int diagnosticLocation)
         {
             // Arrange

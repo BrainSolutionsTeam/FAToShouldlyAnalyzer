@@ -62,14 +62,14 @@ namespace FluentAssertionsToShouldlyAnalyzer
         private static bool IsCodeFixAvailable(
             SyntaxNode invocationNode,
             SemanticModel semanticModel,
-            out MemberAccessExpressionSyntax memberAccessExpression,
+            out ExpressionSyntax memberAccessExpression,
             out string shouldlyMethod,
             out InvocationExpressionSyntax nextInvocation)
         {
 
             if ((invocationNode is IdentifierNameSyntax invocation                                              // invocation = Should
                   && invocation.Parent is MemberAccessExpressionSyntax memberAccess                             // memberAccess = person.Name.Should
-                  && memberAccess.Expression is MemberAccessExpressionSyntax lMemberAccessExpression            // memberAccessExpression = person.Name
+                  && memberAccess.Expression is ExpressionSyntax lMemberAccessExpression                        // memberAccessExpression = person.Name
                 ) is false)
             {
                 memberAccessExpression = null;
@@ -118,7 +118,7 @@ namespace FluentAssertionsToShouldlyAnalyzer
         private static Task<Solution> ChangeShouldMethodCall(
             SyntaxNode root,
             Document document,
-            MemberAccessExpressionSyntax memberAccessExpression,
+            ExpressionSyntax memberAccessExpression,
             string shouldlyMethod,
             InvocationExpressionSyntax nextInvocation,
             // ReSharper disable once UnusedParameter.Local
@@ -155,6 +155,7 @@ namespace FluentAssertionsToShouldlyAnalyzer
                 ["NotBe"] = "ShouldNotBe",
                 ["BeNull"] = "ShouldBeNull",
                 ["NotBeNull"] = "ShouldNotBeNull",
+                ["BeTrue"] = "ShouldBeTrue",
             };
     }
 }
