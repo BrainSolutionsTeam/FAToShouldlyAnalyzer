@@ -26,7 +26,11 @@ jobs:
         run: dotnet restore Src/FluentAssertionsToShouldlyAnalyzer.sln
 
       - name: Build solution projects
-        run: dotnet build Src/FluentAssertionsToShouldlyAnalyzer.sln --configuration Release --no-restore
+        run: |
+          dotnet build Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer  --configuration Release --no-restore
+          dotnet build Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.CodeFixes  --configuration Release --no-restore
+          dotnet build Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.Package  --configuration Release --no-restore
+          dotnet build Src/FluentAssertionsToShouldlyAnalyzer/FluentAssertionsToShouldlyAnalyzer.Test  --configuration Release --no-restore
 
       - name: Run Unit Tests and Generate Coverage
         uses: glennawatson/coverlet-msbuild@v1
